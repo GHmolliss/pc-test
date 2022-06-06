@@ -28,8 +28,10 @@ final class ProductsModel extends Model
         return $data;
     }
 
-    public function add(array $products): void
+    public function add(array $products): int
     {
+        $count = 0;
+
         foreach ($products as $product) {
             $sql = <<<SQL
                 INSERT INTO `products` (`name`, `href`, `src`, `price`) VALUES
@@ -44,6 +46,10 @@ final class ProductsModel extends Model
                 ':src' => $product->src,
                 ':price' => $product->price,
             ]);
+
+            ++$count;
         }
+
+        return $count;
     }
 }

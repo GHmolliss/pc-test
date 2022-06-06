@@ -21,6 +21,8 @@
 </form>
 
 <?php if (!empty($this->data['products'])) { ?>
+    <p>Найдено: <?= $this->data['parse']['search_products'] ?>, Добавлено: <?= $this->data['parse']['added_products'] ?></p>
+
     <table class="table">
         <thead>
             <tr>

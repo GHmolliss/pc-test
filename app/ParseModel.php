@@ -18,6 +18,8 @@ final class ParseModel extends Model
         'result' => 'ok',
         'message' => '',
         'code' => 0,
+        'search_products' => 0,
+        'added_products' => 0,
     ];
     private $url = [];
 
@@ -35,7 +37,6 @@ final class ParseModel extends Model
         $Products = new ProductsModel;
 
         try {
-            // header('Content-Type: text/plain; charset=UTF-8');
             $this->getURLParams($url);
             $html = $this->getHTML($url);
             $htmlMain = $this->getHTMLMainBlock($html);
@@ -43,13 +44,11 @@ final class ParseModel extends Model
             $products = $this->getProducts($htmlProducts);
 
             $Products->clear();
-            $Products->add($products);
+            $this->data['added_products'] = $Products->add($products);
         } catch (\Exception $exception) {
-            $this->data = [
-                'result' => 'error',
-                'message' => $exception->getMessage(),
-                'code' => $exception->getCode(),
-            ];
+            $this->data['result'] = 'error';
+            $this->data['message'] = $exception->getMessage();
+            $this->data['code'] = $exception->getCode();
         }
 
         return $this->data;
@@ -118,8 +117,11 @@ final class ParseModel extends Model
     private function getProducts(array $productsBlocks): array
     {
         $products = [];
+        $this->data['search_products'] = count($productsBlocks);
 
         foreach ($productsBlocks as $html) {
+
+
             $productData = $this->getTagInfo($this->params->product, $html);
             $priceData = $this->getTagInfo($this->params->productPrice, $html);
             $imageData = $this->getTagInfo($this->params->productImage, $html, false);
